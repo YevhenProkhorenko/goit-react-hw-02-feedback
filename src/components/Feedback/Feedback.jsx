@@ -1,5 +1,8 @@
 import { Component } from 'react';
-import css from '../Feedback/Feedback.module.css';
+import Section from './Section';
+import FeedbackOptions from './FeedbackOptions';
+import Statistics from './FeedbackStatistics';
+import Notification from './Notification';
 
 export default class Feedback extends Component {
   state = {
@@ -7,6 +10,7 @@ export default class Feedback extends Component {
     neutral: 0,
     bad: 0,
   };
+
   leaveFeedback = propertyName => {
     this.setState(prevState => {
       const value = prevState[propertyName];
@@ -15,45 +19,46 @@ export default class Feedback extends Component {
       };
     });
   };
+
+  countTotalFeedback() {
+    const { good, neutral, bad } = this.state;
+    return good + neutral + bad;
+  }
+
+  countPositiveFeedbackPercentage(good) {
+    const total = this.countTotalFeedback();
+    if (!total) {
+      return 0;
+    } else {
+      const value = this.state[good];
+      const percentage = (value / total) * 100;
+      return Number(percentage.toFixed(2));
+    }
+  }
+
   render() {
     const { good, neutral, bad } = this.state;
+    const total = this.countTotalFeedback();
+    const positivePercentage = this.countPositiveFeedbackPercentage('good');
+
     return (
       <div>
-        <h2 className={css.tittle}>Please leave feedback</h2>
-        <ul className={css.list}>
-          <li className={css.listItem}>
-            <button
-              className={css.button}
-              onClick={() => this.leaveFeedback('good')}
-            >
-              Good
-            </button>
-          </li>
-          <li className={css.listItem}>
-            <button
-              className={css.button}
-              onClick={() => this.leaveFeedback('neutral')}
-            >
-              Neutral
-            </button>
-          </li>
-          <li className={css.listItem}>
-            <button
-              className={css.button}
-              onClick={() => this.leaveFeedback('bad')}
-            >
-              Bad
-            </button>
-          </li>
-        </ul>
-        <h2 className={css.tittle}>Statistics</h2>
-        <ul className={css.statisticList}>
-          <li>Good: {good}</li>
-          <li>Neutral: {neutral}</li>
-          <li>Bad: {bad}</li>
-          <li>Total: </li>
-          <li>Positive feedback: </li>
-        </ul>
+        <Section title="Please leave feedback">
+          <FeedbackOptions leaveFeedback={this.leaveFeedback} />
+        </Section>
+        {!total ? (
+          <Notification message="There is no feedback"></Notification>
+        ) : (
+          <Section title="Statistics">
+            <Statistics
+              good={good}
+              neutral={neutral}
+              bad={bad}
+              total={total}
+              positivePercentage={positivePercentage}
+            />
+          </Section>
+        )}
       </div>
     );
   }

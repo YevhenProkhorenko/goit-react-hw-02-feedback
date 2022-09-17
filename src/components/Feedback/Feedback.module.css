@@ -42,3 +42,8 @@
   color: blue;
   background: #ffff;
 }
+.notification {
+  font-size: 30px;
+  line-height: 1.25;
+  color: #ff0000;
+}
