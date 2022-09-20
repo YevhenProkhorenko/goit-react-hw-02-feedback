@@ -32,7 +32,7 @@ export default class Feedback extends Component {
     } else {
       const value = this.state[good];
       const percentage = (value / total) * 100;
-      return Number(percentage.toFixed(2));
+      return Number(percentage.toFixed(0));
     }
   }
 
@@ -44,7 +44,10 @@ export default class Feedback extends Component {
     return (
       <div>
         <Section title="Please leave feedback">
-          <FeedbackOptions leaveFeedback={this.leaveFeedback} />
+          <FeedbackOptions
+            options={Object.keys(this.state)}
+            leaveFeedback={this.leaveFeedback}
+          />
         </Section>
         {!total ? (
           <Notification message="There is no feedback"></Notification>
